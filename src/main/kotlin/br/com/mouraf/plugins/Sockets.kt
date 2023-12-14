@@ -1,6 +1,7 @@
 package br.com.mouraf.plugins
 
 import io.ktor.server.application.*
+import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import java.time.Duration
@@ -13,5 +14,14 @@ fun Application.configureSockets() {
         masking = false
     }
     routing {
+        webSocket("/chat") {
+            send("Conectado")
+            for (frame in incoming){
+                frame as? Frame.Text ?: continue
+                val receivedText = frame.readText()
+                send("Voce falou: $receivedText")
+            }
+        }
     }
 }
+
